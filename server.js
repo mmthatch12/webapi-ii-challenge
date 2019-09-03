@@ -58,6 +58,34 @@ server.get('/api/posts', (req, res) => {
 })
 
 
+//could not get error statement to work
+server.get('/api/posts/:id', (req, res) => {
+    const postId = req.params.id;
+
+    db.findById(postId)
+        .then(dat => {
+            res.status(200).json(dat)
+        })
+        .catch(error => {
+            res.status(500).json({ error: "The post information could not be retrieved." })
+        })
+    
+    // if(postId !== db.post_id) {
+    //     res.status(404).json({ message: "The post with the specified ID does not exist." })
+    // } else {
+    //     db.findById(postId)
+    //     .then(dat => {
+    //         res.status(200).json(dat)
+    //     })
+    //     .catch(error => {
+    //         res.status(500).json({ error: "The post information could not be retrieved." })
+    //     })
+    // }
+    
+
+})
+
+
 
 
 
