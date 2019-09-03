@@ -27,6 +27,25 @@ server.post('/api/posts', (req, res) => {
         })
 })
 
+server.post('/api/posts/:id/comments', (req, res) => {
+    const postInfo = db.find(p => p.id == req.params.id)
+
+    if(!postInfo) {
+        res.status(404).json({ message: "The post with the specified ID does not exist." })
+    } else if (postInfo.text) {
+        db.insert(postInfo)
+        .then(dat => {
+            res.status(201).json(dat)
+        })
+        .catch(error => {
+            res.status(500).json({ error: "There was an error while saving the comment to the database" })
+        })
+        
+    }
+
+    
+})
+
 
 
 
