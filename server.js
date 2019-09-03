@@ -15,16 +15,12 @@ server.post('/api/posts', (req, res) => {
             res.status(201).json(dat)
         })
         .catch(error => {
-            res.send(error)
+            res.status(500).json({ error: "There was an error while saving the post to the database" })
         })
     } else {
         res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
     }
 
-    db.insert()
-        .catch(error => {
-            res.status(500).json({ error: "There was an error while saving the post to the database" })
-        })
 })
 
 //this one isn't working yet?
@@ -117,21 +113,18 @@ server.put('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
 
     if(postInfro.title && postInfro.contents) {
-        db.insert(postInfro)
+        db.update(postId, postInfro )
         .then(dat => {
             res.status(200).json(dat)
         })
         .catch(error => {
-            res.send(error)
+            res.status(500).json({ error: "There was an error while saving the post to the database" })
         })
     } else {
         res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
     }
 
-    db.insert()
-        .catch(error => {
-            res.status(500).json({ error: "There was an error while saving the post to the database" })
-        })
+
 })
 
 
