@@ -85,6 +85,16 @@ server.get('/api/posts/:id', (req, res) => {
 
 })
 
+//don't have the error statements hooked up yet
+server.get('/api/posts/:id/comments', (req, res) => {
+    const postId = req.params.id;
+
+    db.findCommentById(postId)
+        .then(dat => {
+            res.status(200).json(dat)
+        })
+})
+
 
 
 
