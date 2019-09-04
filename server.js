@@ -23,24 +23,22 @@ server.post('/api/posts', (req, res) => {
 
 })
 
-//this one isn't working yet?
+
 server.post('/api/posts/:id/comments', (req, res) => {
-    const comment = req.body;
+   
     const id = req.params.id;
 
-    if(comment.id !== id) {
-        res.status(404).json({ message: "The post with the specified ID does not exist." })
-        
-    } 
-
-    db.insertComment(comment)
-    .then(dat => {
-        res.status(201).json(dat)
-    })
-    .catch(error => {
-        res.status(500).json({ error: "There was an error while saving the comment to the database" })
-    }) 
-     
+    db.findPostComments(id)
+        .then(dat => {
+            if(dat.length >= 1){
+                res.status(201).json(dat)
+            } else {
+                res.status(404).json({ message: "The post with the specified ID does not exist." })
+            }
+        })
+        .catch(error => {
+            res.status(500).json({ error: "There was an error while saving the comment to the database" })
+        })  
 })
 
 server.get('/api/posts', (req, res) => {
@@ -66,7 +64,7 @@ server.get('/api/posts/:id', (req, res) => {
             res.status(500).json({ error: "The post information could not be retrieved." })
         })
     
-    // if(postId !== db.post_id) {
+    // if(!postId) {
     //     res.status(404).json({ message: "The post with the specified ID does not exist." })
     // } else {
     //     db.findById(postId)
@@ -85,7 +83,7 @@ server.get('/api/posts/:id', (req, res) => {
 server.get('/api/posts/:id/comments', (req, res) => {
     const postId = req.params.id;
 
-    db.findCommentById(postId)
+    db.findPostComments(postId)
         .then(dat => {
             res.status(200).json(dat)
         })
@@ -108,6 +106,7 @@ server.delete('/api/posts/:id', (req, res) => {
         })
 })
 
+//404 error not working
 server.put('/api/posts/:id', (req, res) => {
     const postInfro = req.body
     const postId = req.params.id;
