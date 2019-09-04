@@ -52,17 +52,36 @@ server.get('/api/posts', (req, res) => {
 })
 
 
-//could not get error statement to work
 server.get('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
 
     db.findById(postId)
         .then(dat => {
-            res.status(200).json(dat)
+            if(dat.length >= 1) {
+                res.status(200).json(dat)
+            } else {
+                res.status(404).json({ message: "The post with the specified ID does not exist." })
+            }
         })
         .catch(error => {
-            res.status(500).json({ error: "The post information could not be retrieved." })
-        })
+                res.status(500).json({ error: "The post information could not be retrieved." })
+            })
+
+    // db.findById(postId)
+    //     .then(dat => {
+    //         dat.map(ar => ar.id === postId ? res.status(200).json(dat) : res.status(404).json({ message: "The post with the specified ID does not exist." }))
+    //     })
+    //     .catch(error => {
+    //         res.status(500).json({ error: "The post information could not be retrieved." })
+    //     })
+            
+
+        // .then(dat => {
+        //     res.status(200).json(dat)
+        // })
+        // .catch(error => {
+        //     res.status(500).json({ error: "The post information could not be retrieved." })
+        // })
     
     // if(!postId) {
     //     res.status(404).json({ message: "The post with the specified ID does not exist." })
@@ -85,53 +104,56 @@ server.get('/api/posts/:id/comments', (req, res) => {
 
     db.findPostComments(postId)
         .then(dat => {
-            res.status(200).json(dat)
+            if(dat.length >= 1) {
+                res.status(200).json(dat)
+            } else {
+                res.status(404).json({ message: "The post with the specified ID does not exist." })
+            }
+            
         })
         .catch(dat => {
             res.status(500).json({ error: "The comments information could not be retrieved." })
         })
 })
 
-
-//need to get 404 error working
 server.delete('/api/posts/:id', (req, res) => {
     const postId = req.params.id;
 
     db.remove(postId)
         .then(dat => {
-            res.status(200).json(dat)
+            if(dat > 0) {
+                res.status(200).json(dat)
+            } else {
+                
+                res.status(404).json({ message: "The post with the specified ID does not exist." })
+            }
         })
         .catch(error => {
             res.status(500).json({ error: "The post could not be removed" })
         })
+        
+        
 })
 
-//404 error not working
 server.put('/api/posts/:id', (req, res) => {
     const postInfro = req.body
     const postId = req.params.id;
 
-    if(postInfro.title && postInfro.contents) {
-        db.update(postId, postInfro )
+    db.update(postId, postInfro)
         .then(dat => {
-            res.status(200).json(dat)
+            if(dat !== 1) {
+                res.status(404).json({ message: "The post with the specified ID does not exist." })
+            } else if (postInfro.title && postInfro.contents) {
+                res.status(200).json(dat)
+            } else {
+                res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
+            }
         })
         .catch(error => {
             res.status(500).json({ error: "There was an error while saving the post to the database" })
         })
-    } else {
-        res.status(400).json({ errorMessage: "Please provide title and contents for the post." })
-    }
-
 
 })
-
-
-
-
-
-
-
 
 
 module.exports = server
